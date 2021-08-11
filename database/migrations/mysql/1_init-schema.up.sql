@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     `uuid` CHAR(36) UNIQUE,
-    email VARCHAR(64),
+    email VARCHAR(64) UNIQUE,
     `password` VARCHAR(128),
     `name` VARCHAR(64),
     created_at TIMESTAMP DEFAULT NOW(),

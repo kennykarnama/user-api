@@ -54,17 +54,10 @@ func Init(name string) *redis.Pool {
 	if name == "" {
 		panic("redis name could not be empty")
 	}
-	if _, ok := config[name]; ok {
-		panic("redis name must be unique")
-	}
 	name = strings.ToUpper(name)
 	var cfg Config
 	envconfig.MustProcess(name, &cfg)
-	config[name] = cfg
-	if err := config[name].validate(name); err != nil {
-		panic(err)
-	}
-	return config[name].Connect()
+	return cfg.Connect()
 }
 
 // Config is configuration of redis db connection
@@ -87,12 +80,4 @@ type Config struct {
 	MaxConnLifetime int `envconfig:"REDIS_MAX_CONN_LIFETIME" default:"10"`
 	// Wait to disable/enable redis using only connection from pooling
 	Wait bool `envconfig:"REDIS_WAIT" default:"true"`
-}
-
-func (cfg Config) validate(name string) error {
-	// sync inputed db name with actual value in REDIS_NAME
-	if strings.ToLower(name) != strings.ToLower(cfg.Name) {
-		return fmt.Errorf("inputed name must be same with NAME in {DB_NAME}_REDIS_NAME")
-	}
-	return nil
 }

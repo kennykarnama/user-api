@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"net/http"
 	"user-api/domain/api/shared"
@@ -31,8 +30,7 @@ func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	err := util.DecodeToStruct(r.Body, &req)
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
-			CustomErrorCode: "-",
-			Message:         err.Error(),
+			Message: err.Error(),
 		}, http.StatusInternalServerError)
 		return
 	}
@@ -44,7 +42,6 @@ func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("sini")
 	newUser := &userEntity.User{
 		Email:    req.Email,
 		Password: req.Password,
@@ -62,6 +59,7 @@ func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 			CustomErrorCode: "-",
 			Message:         err.Error(),
 		}, httpStatus)
+		return
 	}
 
 	shared.ResponseJson(w, registerUserResponse{

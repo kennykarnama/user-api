@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+type Empty struct{}
+
 func ResponseJson(w http.ResponseWriter, payload interface{}, httpStatus int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(httpStatus)

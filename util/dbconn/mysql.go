@@ -64,7 +64,7 @@ func InitGorm(dbName string) *gorm.DB {
 		logMode = logger.Info
 	}
 	db, err := gorm.Open(mysql.New(mysql.Config{Conn: sqlDB}), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{SingularTable: true},
+		NamingStrategy: schema.NamingStrategy{SingularTable: false},
 		Logger:         logger.Default.LogMode(logMode),
 	})
 	if err != nil {

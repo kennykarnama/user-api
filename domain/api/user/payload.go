@@ -9,7 +9,7 @@ type registerUserRequest struct {
 }
 
 type registerUserResponse struct {
-	ID            int64                `json:"id"`
-	UUID          string               `json:"uuid"`
-	ErrorResponse shared.ErrorResponse `json:"errorResponse,omitempty"`
+	ID            int64                 `json:"id"`
+	UUID          string                `json:"uuid"`
+	ErrorResponse *shared.ErrorResponse `json:"errorResponse,omitempty"`
 }

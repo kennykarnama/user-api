@@ -33,3 +33,11 @@ func (s *service) RegisterUser(ctx context.Context, user *userEntity.User) error
 	}
 	return nil
 }
+
+func (s *service) GetUserByEmail(ctx context.Context, email string) (*userEntity.User, error) {
+	return s.repo.GetUserByEmail(ctx, email)
+}
+
+func (s *service) GetUserByID(ctx context.Context, id int64) (*userEntity.User, error) {
+	return s.repo.GetUserByID(ctx, id)
+}

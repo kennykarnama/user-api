@@ -28,3 +28,29 @@ func (r *repository) RegisterUser(ctx context.Context, user *user.User) error {
 	}
 	return nil
 }
+
+func (r *repository) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
+	var usr user.User
+	err := r.db.Model(&user.User{}).Where("email = ?", email).Find(&usr).Error
+	if err != nil {
+		return nil, fmt.Errorf("action=repo.getUserByEmail email=%v err=%v", email, err)
+	}
+	// UUID empty will be considered as not exist user
+	if usr.UUID == "" {
+		return nil, nil
+	}
+	return &usr, nil
+}
+
+func (r *repository) GetUserByID(ctx context.Context, id int64) (*user.User, error) {
+	var usr user.User
+	err := r.db.Model(&user.User{}).Where("id = ?", id).Find(&usr).Error
+	if err != nil {
+		return nil, fmt.Errorf("action=repo.getUserByID id=%v err=%v", id, err)
+	}
+	// UUID empty will be considered as not exist user
+	if usr.UUID == "" {
+		return nil, nil
+	}
+	return &usr, nil
+}

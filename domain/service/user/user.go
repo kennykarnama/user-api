@@ -2,9 +2,11 @@ package user
 
 import (
 	"context"
+	"errors"
 	uuid "github.com/satori/go.uuid"
 	userEntity "user-api/domain/models/user"
 	userRepo "user-api/domain/repository/user"
+	"user-api/util"
 )
 
 type service struct {
@@ -17,5 +19,17 @@ func NewService(repo userRepo.Repository) *service {
 
 func (s *service) RegisterUser(ctx context.Context, user *userEntity.User) error {
 	user.UUID = uuid.NewV4().String()
-	return s.repo.RegisterUser(ctx, user)
+	hashedPwd, err := util.Encrypt(user.PasswordAsByte())
+	if err != nil {
+		return err
+	}
+	user.Password = hashedPwd
+	err = s.repo.RegisterUser(ctx, user)
+	if err != nil {
+		if errors.Is(err, userRepo.ErrDuplicateEntry) {
+			return ErrUserAlreadyExist
+		}
+		return err
+	}
+	return nil
 }

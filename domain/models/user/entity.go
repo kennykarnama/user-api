@@ -14,3 +14,7 @@ type User struct {
 	UpdatedAt time.Time
 	DeletedAt *time.Time
 }
+
+func (u *User) PasswordAsByte() []byte {
+	return []byte(u.Password)
+}

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -9,6 +11,9 @@ import (
 	"os"
 	"user-api/config"
 	"user-api/domain/api/user"
+	"user-api/domain/repository/user/mysql"
+	userService "user-api/domain/service/user"
+	"user-api/util/dbconn"
 )
 
 type server struct {
@@ -16,6 +21,8 @@ type server struct {
 }
 
 func main() {
+
+	ctx := context.Background()
 	cfg := config.Get()
 
 	hostName, err := os.Hostname()
@@ -29,8 +36,13 @@ func main() {
 		"hostname": hostName,
 	}
 
+	fmt.Println(cfg.ServiceName)
+	db := dbconn.InitGorm(cfg.ServiceName)
+	userMysqlRepository := mysql.NewMysqlRepository(db)
+	userService := userService.NewService(userMysqlRepository)
+
 	v := validator.New()
-	userHandler := user.NewHandler(nil, v)
+	userHandler := user.NewHandler(ctx, userService, v)
 
 	logrus.WithFields(standardFields).Infof("HTTP served on port: %v", cfg.RestPort)
 	httpServer := &server{
@@ -39,7 +51,7 @@ func main() {
 		},
 	}
 	r := mux.NewRouter()
-	r.Handle("/api/v1/user", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(userHandler.RegisterUser)))
+	r.Handle("/api/v1/user", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(userHandler.RegisterUser))).Methods("POST")
 
 	httpServer.Handler = r
 

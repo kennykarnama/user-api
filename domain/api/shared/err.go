@@ -1,6 +1,6 @@
 package shared
 
 type ErrorResponse struct {
-	Code    string
-	Message string
+	CustomErrorCode string `json:"customErrorCode,omitempty"`
+	Message         string `json:"message"`
 }

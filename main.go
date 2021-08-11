@@ -1,11 +1,14 @@
 package main
 
 import (
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"user-api/config"
-	"github.com/sirupsen/logrus"
+	"user-api/domain/api/user"
 )
 
 type server struct {
@@ -15,33 +18,32 @@ type server struct {
 func main() {
 	cfg := config.Get()
 
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-
 	hostName, err := os.Hostname()
 	if err != nil {
 		panic(err)
 	}
 
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	standardFields := logrus.Fields{
-		"appname": "user-api",
+		"appname":  "user-api",
 		"hostname": hostName,
 	}
 
+	v := validator.New()
+	userHandler := user.NewHandler(nil, v)
+
 	logrus.WithFields(standardFields).Infof("HTTP served on port: %v", cfg.RestPort)
-	httpServer := NewServer(cfg)
-
-	if err := httpServer.ListenAndServe(); err != nil {
-		logrus.WithFields(standardFields).Fatalf("unable to serve. err: %v", err)
-	}
-}
-
-func NewServer(cfg config.Config) *server {
-	s := &server{
+	httpServer := &server{
 		Server: http.Server{
 			Addr: ":" + cfg.RestPort,
 		},
 	}
 	r := mux.NewRouter()
-	s.Handler = r
-	return s
+	r.Handle("/api/v1/user", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(userHandler.RegisterUser)))
+
+	httpServer.Handler = r
+
+	if err := httpServer.ListenAndServe(); err != nil {
+		logrus.WithFields(standardFields).Fatalf("unable to serve. err: %v", err)
+	}
 }

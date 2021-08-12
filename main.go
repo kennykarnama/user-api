@@ -34,7 +34,7 @@ func main() {
 	}
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	standardFields := logrus.Fields{
-		"appname":  "user-api",
+		"appname":  cfg.ServiceName,
 		"hostname": hostName,
 	}
 
@@ -52,7 +52,7 @@ func main() {
 	v := validator.New()
 	userHandler := user.NewHandler(ctx, userService, v)
 	userAuthHandler := userauth.NewHandler(ctx, v, userAuthService)
-	logrus.WithFields(standardFields).Infof("HTTP served on port: %v", cfg.RestPort)
+
 	httpServer := &server{
 		Server: http.Server{
 			Addr: ":" + cfg.RestPort,
@@ -66,6 +66,8 @@ func main() {
 	r.Handle("/api/v1/user/auth/token/refresh", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(userAuthHandler.RefreshToken))).Methods("POST")
 
 	httpServer.Handler = r
+
+	logrus.WithFields(standardFields).Infof("HTTP served on port: %v", cfg.RestPort)
 
 	if err := httpServer.ListenAndServe(); err != nil {
 		logrus.WithFields(standardFields).Fatalf("unable to serve. err: %v", err)

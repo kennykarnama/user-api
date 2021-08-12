@@ -30,6 +30,6 @@ export USER_API_REDIS_PORT=6379
 exec
 
 ```shell
-set -o allexport; source .env; set +o allexport
+set -o allexport; source .sh.env; set +o allexport
 ```
 # API Contracts

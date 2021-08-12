@@ -31,7 +31,7 @@ func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
 			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 
@@ -50,15 +50,10 @@ func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.userService.RegisterUser(h.ctx, newUser)
 	if err != nil {
-		httpStatus := http.StatusInternalServerError
-		if err == user.ErrUserAlreadyExist {
-			// ref: https://tools.ietf.org/html/rfc7231#section-4.3.3
-			httpStatus = http.StatusSeeOther
-		}
 		shared.ResponseJson(w, shared.ErrorResponse{
 			CustomErrorCode: "-",
 			Message:         err.Error(),
-		}, httpStatus)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 
@@ -66,5 +61,6 @@ func (h *Handler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		ID:   newUser.ID,
 		UUID: newUser.UUID,
 	}, http.StatusCreated)
+
 	return
 }

@@ -17,7 +17,6 @@ import (
 	userAuthService "user-api/domain/service/userauth"
 	"user-api/util"
 	"user-api/util/dbconn"
-	"user-api/util/redisconn"
 )
 
 type server struct {
@@ -40,7 +39,7 @@ func main() {
 	}
 
 	db := dbconn.InitGorm(cfg.ServiceName)
-	redisPool := redisconn.Init(cfg.ServiceName)
+	redisPool := dbconn.Init(cfg.ServiceName)
 
 	redisWrapper := util.NewRedisWrapper(redisPool)
 

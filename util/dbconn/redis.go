@@ -1,4 +1,4 @@
-package redisconn
+package dbconn
 
 import (
 	"fmt"
@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-var config = make(map[string]Config)
+var config = make(map[string]RedisConfig)
 
 // Connect to connect to redis and return connection pooling of redis
-func (cfg Config) Connect() *redis.Pool {
+func (cfg RedisConfig) Connect() *redis.Pool {
 	// construct URL from host and port
 	URL := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	// create redis pooling
@@ -43,11 +43,6 @@ func (cfg Config) Connect() *redis.Pool {
 	return Redis
 }
 
-// GetConfig to get config incase config needed by service
-func GetConfig(name string) Config {
-	return config[name]
-}
-
 // Init to init config using default environment variable
 // use <NAME>_REDIS_<ITEMS> convention to construct envar key
 func Init(name string) *redis.Pool {
@@ -55,14 +50,14 @@ func Init(name string) *redis.Pool {
 		panic("redis name could not be empty")
 	}
 	name = strings.ToUpper(name)
-	var cfg Config
+	var cfg RedisConfig
 	envconfig.MustProcess(name, &cfg)
 	return cfg.Connect()
 }
 
-// Config is configuration of redis db connection
+// RedisConfig is configuration of redis db connection
 // use <DB NAME>_REDIS_<ITEMS> convention to construct envar key
-type Config struct {
+type RedisConfig struct {
 	Name string `envconfig:"REDIS_NAME" default:""`
 	// Host is host of redis
 	Host string `envconfig:"REDIS_HOST" default:""`

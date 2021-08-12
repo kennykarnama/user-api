@@ -25,7 +25,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
 			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 
@@ -45,20 +45,17 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
 			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 
 	resp := NewLoginResponseFromJwt(metadata)
 
-	shared.ResponseJson(w, resp, http.StatusCreated)
+	shared.ResponseJson(w, resp, http.StatusOK)
 
 	return
 }
 
-/*
-TODO: map to corresponding http code based on error
-*/
 func (h *Handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 
 	token := r.Header.Get("Authorization")
@@ -73,7 +70,7 @@ func (h *Handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
 			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 
@@ -98,7 +95,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
 			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 
@@ -119,7 +116,7 @@ func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		shared.ResponseJson(w, shared.ErrorResponse{
 			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		}, shared.ErrorToHTTPStatus(err))
 		return
 	}
 

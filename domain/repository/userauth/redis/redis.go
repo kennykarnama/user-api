@@ -46,7 +46,6 @@ func (r *repository) SaveJWTSession(ctx context.Context, userID int64, metadata 
 	return nil
 }
 
-// TODO: enhance error message
 func (r *repository) IsAccessTokenExist(ctx context.Context, tokenID string) (bool, error) {
 	return r.redisWrapper.Exists(ctx, r.tokenKey(AccessTokenKey, tokenID))
 }
@@ -55,7 +54,6 @@ func (r *repository) IsRefreshTokenExist(ctx context.Context, tokenID string) (b
 	return r.redisWrapper.Exists(ctx, r.tokenKey(RefreshTokenKey, tokenID))
 }
 
-// TODO: enhance error message
 func (r *repository) DeleteJWTSession(ctx context.Context, token string) error {
 	err := r.redisWrapper.Pipeline(ctx, func(conn redis.Conn) error {
 		conn.Send("MULTI")

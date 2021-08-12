@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    `uuid` CHAR(36) UNIQUE,
-    email VARCHAR(64) UNIQUE,
-    `password` VARCHAR(128),
-    `name` VARCHAR(64),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP,
+    `uuid` CHAR(36) NOT NULL UNIQUE,
+    email VARCHAR(64) NOT NULL UNIQUE,
+    `password` VARCHAR(128) NOT NULL,
+    `name` VARCHAR(64) NOT NULL ,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL,
     deleted_at TIMESTAMP
 );
